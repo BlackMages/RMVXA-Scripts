@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Fast Travel Script By Black Mage (Credit required to use)
-# Version : 1.4
+# Version: 1.4
 #
 # https://burningwizard.wordpress.com/2017/05/03/fast-travel-script/
 #-------------------------------------------------------------------------------
