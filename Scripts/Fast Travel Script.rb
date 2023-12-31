@@ -1,24 +1,50 @@
 #-------------------------------------------------------------------------------
-# Fast Travel Script By Black Mage (Credit required to use)
+# Fast Travel Script By Black Mage
 # Version: 1.4
 #
 # https://burningwizard.wordpress.com/2017/05/03/fast-travel-script/
 #-------------------------------------------------------------------------------
 #
-# * The script creates a map that hover through listed locations.
+# * The script creates a map that hovers through listed locations.
 #
 # * The background image is named "Map_Select", and placed inside 
 #   Graphics/System folder.
 #
 #-------------------------------------------------------------------------------
-#
+
+=begin
+
+MIT License
+
+Copyright 2015-2023 Black Mage
+ 
+Permission is hereby granted, free of charge, to any person obtaining a copy of 
+this software and associated documentation files (the “Software”), to deal in 
+the Software without restriction, including without limitation the rights to use, 
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the 
+Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
+ 
+The above copyright notice and this permission notice shall be included in all 
+copies or substantial portions of the Software.
+ 
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+=end
+
+#-------------------------------------------------------------------------------
 # * How to use:
 #
 # * Enlist every available location into MAP_LIST.
 #
 # * Assign a switch for each location. Put them on SWITCH_LIST.
 #
-# * When you want a map is listed on the Map Select menu, simply turn their
+# * When you want a map listed on the Map Select menu, simply turn their
 #   respective switch value to "true".
 #
 # * Assign x and y variables for the screen to hover when a location is 
@@ -29,7 +55,7 @@
 #
 # * Call the map using this script call:
 #   fast_travel
-#   use fast_travel(int) to highlight certain choice. The int value are taken 
+#   use fast_travel(int) to highlight certain choice. The int value is taken 
 #   from MAP_LIST order.
 #
 #       Note: Ensure that there's at least one location enabled by the switch. 
@@ -39,7 +65,7 @@
 #
 #-------------------------------------------------------------------------------
 #
-# * There's several additional option below. Feel free to edit them.
+# * There are several additional options below. Feel free to edit them.
 #
 #-------------------------------------------------------------------------------
  
