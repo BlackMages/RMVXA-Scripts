@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Fast Travel Script By Black Mage
-# Version: 1.4
+# Version: 1.5
 #
 # https://burningwizard.wordpress.com/2017/05/03/fast-travel-script/
 #-------------------------------------------------------------------------------
@@ -8,7 +8,7 @@
 # * The script creates a map that hovers through listed locations.
 #
 # * The background image is named "Map_Select", and placed inside 
-#   Graphics/System folder.
+#   Graphics/System/Fasttravel folder.
 #
 #-------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@
 
 MIT License
 
-Copyright 2017-2023 Black Mage
+Copyright 2017-2024 Black Mage
  
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
 this software and associated documentation files (the “Software”), to deal in 
@@ -62,6 +62,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #       If there's no location enabled, the script will crash.
 #
 # * Enjoy your map select menu.
+#
+#       Note: Every graphics should be placed inside Graphics/System/Fasttravel
+#       folder.
 #
 #-------------------------------------------------------------------------------
 #
@@ -153,7 +156,7 @@ module BLACK_MAP_LIST
 
   #-----------------------------------------------------------------------------
   # Use an image for location selection window background. The image is named 
-  # "Window_Map" and placed inside Graphics/System folder.
+  # "Window_Map" and placed inside Graphics/System/Fasttravel folder.
   #-----------------------------------------------------------------------------
   WINDOW_PIC = false
   #-----------------------------------------------------------------------------
@@ -273,7 +276,7 @@ module BLACK_MAP_LIST
   #-----------------------------------------------------------------------------
   # Set this to true to enable the information window picture. The picture 
   # should be named Window_Info and placed inside Graphics/System folder.
-  ADD_WIN_PIC = false 
+  ADD_WIN_PIC = false
   #-----------------------------------------------------------------------------
   # Position of additional information window picture.
   #-----------------------------------------------------------------------------
@@ -300,10 +303,8 @@ module BLACK_MAP_LIST
   # This is an instruction if you want to use an icon for your location. This
   # icon also can serve as a cursor. Note that the icon use different files for
   # each location.
-  # * First, the icon canvas mus be as big as the overworld canvas. This is
-  #   the case to make sure the scrolling is as smooth as possible.
-  # * Second, the icon must be named after the location found in MAP_LIST.
-  # * Third, after the icon name, put the frame number of the icon. The number
+  # * First, the icon must be named after the location found in MAP_LIST.
+  # * Second, after the icon name, put the frame number of the icon. The number
   #   is start from 0.
   #-----------------------------------------------------------------------------
   #-----------------------------------------------------------------------------
@@ -311,16 +312,15 @@ module BLACK_MAP_LIST
   #-----------------------------------------------------------------------------
   LOC_ANI_ICON = false
   #-----------------------------------------------------------------------------
-  # * Set this to false to disable the icon fade. Note that the fade might
-  #   conflict with the frame animation.
-  #-----------------------------------------------------------------------------
-  LOC_ANI_ICON_FADE = true
-  #-----------------------------------------------------------------------------
   # * Location animated icon delay.
   #   You can call this animation speed. Decrease the value to make the 
   #   animation faster.
   #-----------------------------------------------------------------------------
   LOC_ANI_ICON_DELAY = 10
+  #-----------------------------------------------------------------------------
+  # * Set this to true to make the icon fade in and out.
+  #-----------------------------------------------------------------------------
+  LOC_ANI_ICON_FADE = false
   #-----------------------------------------------------------------------------
   # Previously, we fix the maximum frame for each icon, that is 1000 frames.
   # However, this cause some problems with Krosk's "unable to find" script. 
@@ -328,12 +328,20 @@ module BLACK_MAP_LIST
   # we add an additional configuration to specify how many frames will be used
   # in total for the icon animation.
   #-----------------------------------------------------------------------------
-  LOC_ANI_ICON_TOTAL = [2, # Numbers of total frame used for 1st location icon.
-                        2, 
+  LOC_ANI_ICON_TOTAL = [5, # Numbers of total frame used for 1st location icon.
+                        1, 
                         2, 
                         ]  # Note that the file name start with zero, so you'll 
                            # end up with frame numbered n-1 if you put n as the 
                            # frame number.
+  #-----------------------------------------------------------------------------
+  # * Location animated icon position.
+  #   This is where you set the icon position on the overworld.
+  #-----------------------------------------------------------------------------                           
+  LOC_ANI_ICON_POS = [[1720,1055],
+                      [1370,400],
+                      [370,650]
+                      ]
  
   #-----------------------------------------------------------------------------
   # This section is for static location icon. Unlike the animated icon, this
@@ -345,6 +353,14 @@ module BLACK_MAP_LIST
   # * Set this to true to enable the static location icon.
   #-----------------------------------------------------------------------------
   LOC_STATIC_ICON = false
+  #-----------------------------------------------------------------------------
+  # * Location static icon position.
+  #   This is where you set the icon position on the overworld.
+  #-----------------------------------------------------------------------------                           
+  LOC_STATIC_ICON_POS = [[1720,1055],
+                         [1370,400],
+                         [370,650]
+                        ]                        
 end
  
 #-------------------------------------------------------------------------------
@@ -352,7 +368,11 @@ end
 #   to dwelve deeper, or it'll cause many unnecessary problems. Proceed on your 
 #   own risk.
 #-------------------------------------------------------------------------------
- 
+module Cache
+  def self.fasttravel(filename)
+    load_bitmap("Graphics/System/Fasttravel/", filename)
+  end  
+end
 class Game_Interpreter
   def fast_travel(int = -1)
     $game_system.fast_travel_index = int
@@ -405,7 +425,7 @@ class Scene_Map_Select < Scene_Base
     for i in 0..(@map_list.size - 1)
       @map_name = @map_list[i].to_s
       for index in 0..0
-        picture = Cache.system(@map_name + index.to_s).nil?
+        picture = Cache.fasttravel(@map_name + index.to_s).nil?
       end
     end
   end    
@@ -426,7 +446,7 @@ class Scene_Map_Select < Scene_Base
       @information_window_3.oy = 0
       @information_window_3.x = ADD_LOC_THUMB_POS[0]
       @information_window_3.y = ADD_LOC_THUMB_POS[1]  
-      @information_window_3.z = 2
+      @information_window_3.z = 5
     end
     if ADD_LOC_QUEST
       @information_window_4 = Window_Information_4.new
@@ -434,12 +454,12 @@ class Scene_Map_Select < Scene_Base
     end
     if ADD_WIN_PIC
       @info_window = Sprite.new
-      @info_window.bitmap = Cache.system("Window_Info")    
+      @info_window.bitmap = Cache.fasttravel("Window_Info")    
       @info_window.ox = 0
       @info_window.oy = 0
       @info_window.x = ADD_WIN_PIC_POS[0]
       @info_window.y = ADD_WIN_PIC_POS[1]  
-      @info_window.z = 2
+      @info_window.z = 4
       @info_window.opacity = 0
     end
     if ADD_CUR_PARTY
@@ -450,12 +470,12 @@ class Scene_Map_Select < Scene_Base
  
   def create_map_window
     @map_window = Sprite.new
-    @map_window.bitmap = Cache.system("Window_Map")
+    @map_window.bitmap = Cache.fasttravel("Window_Map")
     @map_window.ox = 0
     @map_window.oy = 0
     @map_window.x = WINDOW_PIC_POSITION[0]
     @map_window.y = WINDOW_PIC_POSITION[1]  
-    @map_window.z = 2
+    @map_window.z = 4
     @map_window.opacity = 0
   end
  
@@ -481,7 +501,12 @@ class Scene_Map_Select < Scene_Base
       if LOC_ANI_ICON
         @map_name = assigned_number(@map_list[@command_window.index].to_s)
         @map_name = @map_list[@command_window.index].to_s
-        @map_icon.bitmap = Cache.system(@map_name + "0")
+        pos = LOC_ANI_ICON_POS[assigned_number(@map_name)]
+        @map_icon.bitmap.dispose
+        @map_icon.bitmap = Bitmap.new(@background_sprite.width, @background_sprite.height)
+        bitmap = Cache.fasttravel(@map_name + "0")
+        rect = Rect.new(0, 0, bitmap.width, bitmap.height)
+        @map_icon.bitmap.blt(pos[0], pos[1], bitmap, rect, 255)
         @icon_max = pic_list_number
         @icon_current = 0
       else
@@ -499,7 +524,7 @@ class Scene_Map_Select < Scene_Base
     total_frame = LOC_ANI_ICON_TOTAL[assigned_number(@map_name)]
     for index in 0..(total_frame - 1)
       begin
-        picture = Cache.system(@map_name + index.to_s).nil?
+        picture = Cache.fasttravel(@map_name + index.to_s).nil?
       rescue 
         nil
       else
@@ -519,10 +544,20 @@ class Scene_Map_Select < Scene_Base
         else
           @icon_delay_cur = 0
           if @icon_current.to_i < (@icon_max - 1)
-            @map_icon.bitmap = Cache.system(@map_name + (@icon_current.to_i + 1).to_s)
+            pos = LOC_ANI_ICON_POS[assigned_number(@map_name)]
+            @map_icon.bitmap.dispose
+            @map_icon.bitmap = Bitmap.new(@background_sprite.width,@background_sprite.height)
+            bitmap = Cache.fasttravel(@map_name + (@icon_current.to_i + 1).to_s)
+            rect = Rect.new(0, 0, bitmap.width, bitmap.height)
+            @map_icon.bitmap.blt(pos[0], pos[1], bitmap, rect, 255)
             @icon_current += 1
           else
-            @map_icon.bitmap = Cache.system(@map_name + "0")
+            pos = LOC_ANI_ICON_POS[assigned_number(@map_name)]
+            @map_icon.bitmap.dispose
+            @map_icon.bitmap = Bitmap.new(@background_sprite.width,@background_sprite.height)
+            bitmap = Cache.fasttravel(@map_name + "0")
+            rect = Rect.new(0, 0, bitmap.width, bitmap.height)
+            @map_icon.bitmap.blt(pos[0], pos[1], bitmap, rect, 255)
             @icon_current = 0
           end
         end
@@ -726,13 +761,13 @@ class Scene_Map_Select < Scene_Base
   def information_3_update
     if @information_window_3 != nil and @command_window !=nil
       bitmap_pic = @map_list[@command_window.index].to_s + "_Thumb"
-      @information_window_3.bitmap = Cache.system(bitmap_pic)
+      @information_window_3.bitmap = Cache.fasttravel(bitmap_pic)
     end
   end
  
   def create_background
     @background_sprite = Sprite.new
-    @background_sprite.bitmap = Cache.system("Map_Select")    
+    @background_sprite.bitmap = Cache.fasttravel("Map_Select")    
     @background_sprite.ox = @background_sprite.bitmap.width / 2
     @background_sprite.oy = @background_sprite.bitmap.height / 2
     @background_sprite.x = Graphics.width / 2
@@ -744,8 +779,12 @@ class Scene_Map_Select < Scene_Base
   def create_stat_icon
     @stat_icon = []
     @map_list.each do |loc|
-      a = Sprite.new
-      a.bitmap = Cache.system(loc + "STAT")
+      a = Sprite.new      
+      pos = LOC_STATIC_ICON_POS[assigned_number(loc)]
+      a.bitmap = Bitmap.new(@background_sprite.width,@background_sprite.height)
+      bitmap = Cache.fasttravel(loc + "STAT")
+      rect = Rect.new(0, 0, bitmap.width, bitmap.height)
+      a.bitmap.blt(pos[0], pos[1], bitmap, rect, 255)
       a.ox = @background_sprite.bitmap.width / 2
       a.oy = @background_sprite.bitmap.height / 2
       a.zoom_x = MAP_ZOOM_OUT[0]
@@ -766,7 +805,7 @@ class Scene_Map_Select < Scene_Base
     @map_icon.zoom_y = MAP_ZOOM_OUT[1]
     @map_icon.x = Graphics.width / 2
     @map_icon.y = Graphics.height / 2
-    @map_icon.z = 2
+    @map_icon.z = 3
   end
  
   MAP_LIST.each do |map_name|
@@ -1000,6 +1039,9 @@ end
  
 # Where is Window_Information_3, you ask? Good question, as I too wondering 
 # why there isn't any here. Why the fuck do I skipped over it?
+#
+# 2024 Update: Turns out it's related to @information_window variables. The 3rd
+#              one is a picture, not window. Now the mystery is solved.
  
 class Window_Information_4 < Window_Inf_Base
   include BLACK_MAP_LIST
